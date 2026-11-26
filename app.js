@@ -93,7 +93,7 @@ const btnSmartSchedule = document.getElementById("btnSmartSchedule");
 const scheduleTimeline = document.getElementById("scheduleTimeline");
 const deferredTasksBox = document.getElementById("deferredTasksBox");
 const deferredTasksList = document.getElementById("deferredTasksList");
-const workWindowLabel = document.getElementById("workWindowLabel");
+const workWindowSelect = document.getElementById("workWindowSelect");
 const plantSvgWrapper = document.getElementById("plantSvgWrapper");
 const plantProgressFill = document.getElementById("plantProgressFill");
 const plantStatusText = document.getElementById("plantStatusText");
@@ -245,6 +245,7 @@ function clientSmartSchedule(taskList, availMins = 360, dayStartStr = "09:00") {
 }
 
 async function fetchSchedule() {
+    const availMins = workWindowSelect ? parseInt(workWindowSelect.value) || 360 : 360;
     if (isServerConnected) {
         try {
             const res = await fetch(`${API_BASE}/api/schedule`);
@@ -257,7 +258,7 @@ async function fetchSchedule() {
     }
     // Reliable fallback scheduler
     const tasks = await fetchTasks();
-    return clientSmartSchedule(tasks, 360, "09:00");
+    return clientSmartSchedule(tasks, availMins, "09:00");
 }
 
 async function fetchHistory() {
@@ -675,8 +676,8 @@ function renderDailySchedule(scheduleData) {
         return;
     }
 
-    if (workWindowLabel && scheduleData.available_minutes) {
-        workWindowLabel.textContent = `${formatDuration(scheduleData.available_minutes)} Window`;
+    if (workWindowSelect && scheduleData.available_minutes) {
+        workWindowSelect.value = scheduleData.available_minutes;
     }
 
     scheduleData.scheduled_tasks.forEach(st => {
@@ -867,9 +868,39 @@ async function reloadAll() {
     }
 }
 
+if (workWindowSelect) {
+    workWindowSelect.addEventListener("change", async () => {
+        const mins = parseInt(workWindowSelect.value) || 360;
+        if (isServerConnected) {
+            try {
+                await fetch(`${API_BASE}/api/settings`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ available_minutes: mins })
+                });
+            } catch (e) {
+                console.warn("Failed to update settings on server", e);
+            }
+        }
+        showCelebrationToast("Work Window Updated ⏱️", `Set to ${formatDuration(mins)}. Rescheduling tasks!`);
+        await reloadAll();
+    });
+}
+
 async function init() {
     updateGreeting();
     await checkServer();
+    if (isServerConnected) {
+        try {
+            const res = await fetch(`${API_BASE}/api/settings`);
+            if (res.ok) {
+                const s = await res.json();
+                if (s.available_minutes && workWindowSelect) {
+                    workWindowSelect.value = s.available_minutes;
+                }
+            }
+        } catch (e) {}
+    }
     historyData = await fetchHistory();
     await reloadAll();
     renderProductivityChart();

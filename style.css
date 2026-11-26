@@ -516,6 +516,32 @@ body {
     padding: 2px 0;
 }
 
+.window-control-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f1f5f9;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.window-control-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.select-work-window {
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    outline: none;
+    cursor: pointer;
+    padding: 2px 2px;
+}
+
 .badge-time-avail {
     background: #f1f5f9;
     color: #475569;

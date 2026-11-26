@@ -83,7 +83,16 @@
                 <div class="card-panel">
                     <div class="panel-header">
                         <h2>Daily Planner & Smart Schedule</h2>
-                        <span class="badge-time-avail" id="workWindowLabel">4h Window</span>
+                        <div class="window-control-group">
+                            <label for="workWindowSelect">Work Limit:</label>
+                            <select id="workWindowSelect" class="select-work-window">
+                                <option value="240">4 Hours</option>
+                                <option value="360" selected>6 Hours</option>
+                                <option value="480">8 Hours</option>
+                                <option value="600">10 Hours</option>
+                                <option value="720">12 Hours</option>
+                            </select>
+                        </div>
                     </div>
                     <p class="panel-subtext">Tasks arranged by Python AI heuristic based on priority, deadlines, and available time.</p>
                     
