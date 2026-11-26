@@ -220,7 +220,7 @@ html_content = """<!DOCTYPE html>
         <!-- STUDENT 1 -->
         <div class="member-card">
             <div class="member-header">
-                <span class="member-name">Student 1 (Hardik)</span>
+                <span class="member-name">Student 1</span>
                 <span class="member-role role-fe">Frontend Lead</span>
             </div>
             <div class="member-desc">UI/UX Architecture, Layout Responsiveness & Modal System</div>
@@ -451,7 +451,7 @@ if not pdf_generated:
     
     table_data = [
         ["Member", "Assigned Role", "Key Contributions & Completed Tasks"],
-        ["Student 1 (Hardik)", "Frontend Lead", "Designed mobile & laptop responsive UI, 4 pastel cards, greeting & Add Task modal."],
+        ["Student 1", "Frontend Lead", "Designed mobile & laptop responsive UI, 4 pastel cards, greeting & Add Task modal."],
         ["Student 2", "Backend & Database", "Built Python HTTP server, SQLite schema, REST endpoints, and persistence."],
         ["Student 3", "Algorithm Specialist", "Designed Python smart scheduling heuristic, priority weights & task deferrals."],
         ["Student 4", "Gamification & Analytics", "Created 6-stage SVG Plant Growth tracker, Canvas line chart & Git repo."]
