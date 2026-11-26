@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeWise - Smart Task Scheduling & Productivity Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- TOP NAVIGATION / BRAND -->
+        <header class="app-header">
+            <div class="brand">
+                <span class="brand-name">TimeWise</span>
+            </div>
+            <div class="header-actions">
+                <span class="pill-badge-green">Dashboard</span>
+                <button id="btnOpenAddTask" class="btn-icon-add" title="Add New Task">+</button>
+            </div>
+        </header>
+
+        <!-- GREETING & INTRO -->
+        <section class="greeting-section">
+            <h1 id="greetingHeading">Good afternoon!</h1>
+            <p class="greeting-subtitle">Here's your daily productivity overview.</p>
+        </section>
+
+        <!-- 4 STAT CARDS (2x2 Grid matching screenshot) -->
+        <section class="stats-grid">
+            <!-- Total Tasks (Blue) -->
+            <div class="stat-card card-blue">
+                <div class="stat-number" id="statTotalTasks">08</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+
+            <!-- Completed (Green) -->
+            <div class="stat-card card-green">
+                <div class="stat-number" id="statCompleted">05</div>
+                <div class="stat-label">Completed</div>
+            </div>
+
+            <!-- Pending (Amber/Yellow) -->
+            <div class="stat-card card-amber">
+                <div class="stat-number" id="statPending">03</div>
+                <div class="stat-label">Pending</div>
+            </div>
+
+            <!-- Progress (Purple) -->
+            <div class="stat-card card-purple">
+                <div class="stat-number" id="statProgress">62%</div>
+                <div class="stat-label">Progress</div>
+            </div>
+        </section>
+
+        <!-- MAIN RESPONSIVE CONTENT AREA (Columns on Laptop, Stacked on Mobile) -->
+        <main class="dashboard-main">
+            <!-- LEFT COLUMN: TODAY'S TASKS & DAILY PLANNER -->
+            <div class="content-column left-column">
+                <!-- TODAY'S TASKS SECTION -->
+                <div class="card-panel">
+                    <div class="panel-header">
+                        <h2>Today's Tasks</h2>
+                        <div class="panel-actions">
+                            <button id="btnSmartSchedule" class="btn-smart-schedule">⚡ Smart Schedule</button>
+                        </div>
+                    </div>
+
+                    <!-- Tasks List Container -->
+                    <div class="tasks-list" id="tasksListContainer">
+                        <!-- Dynamically populated from SQLite via Python API -->
+                    </div>
+
+                    <!-- Quick Add Task Trigger Bar -->
+                    <div class="quick-add-bar" id="quickAddTrigger">
+                        <span>+ Add a new task...</span>
+                    </div>
+                </div>
+
+                <!-- DAILY PLANNER (Time Management & Scheduled Slots) -->
+                <div class="card-panel">
+                    <div class="panel-header">
+                        <h2>Daily Planner & Smart Schedule</h2>
+                        <span class="badge-time-avail" id="workWindowLabel">4h Window</span>
+                    </div>
+                    <p class="panel-subtext">Tasks arranged by Python AI heuristic based on priority, deadlines, and available time.</p>
+                    
+                    <div class="schedule-timeline" id="scheduleTimeline">
+                        <!-- Populated with time-slotted items -->
+                    </div>
+
+                    <div id="deferredTasksBox" class="deferred-box" style="display:none;">
+                        <h4>⚠️ Deferred to Tomorrow (Exceeds Today's Available Time)</h4>
+                        <ul id="deferredTasksList"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: PLANT GROWTH & REPORT GRAPH ANALYSIS -->
+            <div class="content-column right-column">
+                <!-- PLANT GROWTH TRACKER (Visual Task Growth) -->
+                <div class="card-panel plant-panel">
+                    <div class="panel-header">
+                        <h2>Plant Growth Tracker</h2>
+                        <span class="badge-plant-stage" id="plantStageBadge">Lush Plant</span>
+                    </div>
+                    <p class="panel-subtext">Every time you complete a task, your plant grows! Complete all tasks for a full blossom.</p>
+
+                    <!-- Animated Interactive SVG Plant -->
+                    <div class="plant-visual-container">
+                        <div class="plant-canvas-wrapper" id="plantSvgWrapper">
+                            <!-- Injected SVG dynamically representing stage 0 to 5 -->
+                        </div>
+                    </div>
+
+                    <div class="plant-stats-footer">
+                        <div class="plant-progress-bar">
+                            <div class="plant-progress-fill" id="plantProgressFill" style="width: 62%;"></div>
+                        </div>
+                        <div class="plant-status-text" id="plantStatusText">
+                            62% Growth &bull; 3 more tasks to reach full bloom! 🌸
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REPORT GRAPH ANALYSIS (Weekly & Monthly Line Graph) -->
+                <div class="card-panel analytics-panel">
+                    <div class="panel-header">
+                        <h2>Productivity Analytics</h2>
+                        <div class="toggle-switch">
+                            <button class="toggle-btn active" id="btnWeekly">Weekly</button>
+                            <button class="toggle-btn" id="btnMonthly">Monthly</button>
+                        </div>
+                    </div>
+                    <p class="panel-subtext">Task completion trends and focus metrics over time.</p>
+
+                    <!-- Interactive Canvas Line Graph -->
+                    <div class="chart-container">
+                        <canvas id="productivityChart" width="500" height="220"></canvas>
+                        <div id="chartTooltip" class="chart-tooltip"></div>
+                    </div>
+
+                    <!-- Summary Stats beneath chart -->
+                    <div class="chart-summary-row">
+                        <div class="chart-stat-item">
+                            <span class="stat-caption">Best Day</span>
+                            <strong id="statBestDay">Thursday (88%)</strong>
+                        </div>
+                        <div class="chart-stat-item">
+                            <span class="stat-caption">Weekly Average</span>
+                            <strong id="statWeeklyAvg">76% Completion</strong>
+                        </div>
+                        <div class="chart-stat-item">
+                            <span class="stat-caption">Focus Hours</span>
+                            <strong id="statFocusHours">24.5 hrs</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER BAR -->
+        <footer class="app-footer">
+            <p>TimeWise &bull; Python Backend & SQLite Database &bull; Responsive Web App</p>
+        </footer>
+
+        <!-- ADD TASK MODAL -->
+        <div class="modal-overlay" id="addTaskModal">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3>Add New Task</h3>
+                    <button class="modal-close" id="btnCloseModal">&times;</button>
+                </div>
+                <form id="addTaskForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="taskTitleInput">Task Name</label>
+                        <input type="text" id="taskTitleInput" placeholder="e.g. Operating Systems Revision" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label>Duration (Hours & Mins)</label>
+                            <div class="time-input-pair">
+                                <div class="sub-input">
+                                    <input type="number" id="taskHours" value="1" min="0" max="24">
+                                    <span>hrs</span>
+                                </div>
+                                <div class="sub-input">
+                                    <input type="number" id="taskMins" value="0" min="0" max="59" step="5">
+                                    <span>mins</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group half">
+                            <label for="taskPriorityInput">Priority</label>
+                            <select id="taskPriorityInput">
+                                <option value="High" selected>High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- DEADLINE SECTION: OPTION (YES/NO) + LAST DEADLINE DATE -->
+                    <div class="deadline-toggle-group">
+                        <div class="form-group">
+                            <label for="taskHasDeadline">Does this task have a deadline?</label>
+                            <select id="taskHasDeadline">
+                                <option value="yes" selected>Yes, set a deadline date</option>
+                                <option value="no">No deadline (Flexible)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="deadlineContainer">
+                            <label for="taskDeadlineDate">Last Deadline Date</label>
+                            <input type="date" id="taskDeadlineDate">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskCategory">Category</label>
+                        <select id="taskCategory">
+                            <option value="Study" selected>Study / Academics</option>
+                            <option value="Assignment">Assignment</option>
+                            <option value="Coding">Coding / Lab</option>
+                            <option value="Project">Project Work</option>
+                            <option value="Work">Work</option>
+                            <option value="Personal">Personal</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-cancel" id="btnCancelModal">Cancel</button>
+                        <button type="submit" class="btn-save">+ Create Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- CELEBRATION OVERLAY (TRIGGERED ON TASK COMPLETION / FULL BLOOM) -->
+        <div class="celebration-toast" id="celebrationToast">
+            <span class="toast-icon">🌱</span>
+            <div class="toast-body">
+                <strong id="toastTitle">Plant Growth!</strong>
+                <p id="toastMessage">Your plant just grew a new leaf!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
